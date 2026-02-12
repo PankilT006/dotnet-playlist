@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "3pldCu00RK8=",
+  "dgSpecHash": "xAvYppaNb3Q=",
   "success": true,
   "projectFilePath": "D:\\Project\\dotnet\\WebApi\\WebApi.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\pci176\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
+    "C:\\Users\\pci176\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
     "C:\\Users\\pci176\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\pci176\\.nuget\\packages\\microsoft.aspnetcore.jsonpatch\\10.0.3\\microsoft.aspnetcore.jsonpatch.10.0.3.nupkg.sha512",
     "C:\\Users\\pci176\\.nuget\\packages\\microsoft.aspnetcore.mvc.newtonsoftjson\\10.0.3\\microsoft.aspnetcore.mvc.newtonsoftjson.10.0.3.nupkg.sha512",

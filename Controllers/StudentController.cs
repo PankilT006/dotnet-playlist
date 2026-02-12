@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
 using WebApi.DTO;
+using AutoMapper;
 
 namespace WebApi.Controllers;
 
@@ -11,10 +12,12 @@ namespace WebApi.Controllers;
 public class StudentController : ControllerBase
 {
     private readonly CollegeDBContext _context;
-
-    public StudentController(CollegeDBContext context)
+    private readonly IMapper _mapper;
+    
+    public StudentController(CollegeDBContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
     // ===================== GET ALL =====================
@@ -24,19 +27,10 @@ public class StudentController : ControllerBase
     public async Task<IActionResult> GetStudents()
     {
         try
-        {
-            var students = await _context.Students
-                .AsNoTracking()
-                .Select(s => new StudentDTO
-                {
-                    id = s.Id,
-                    StudentName = s.StudentName,
-                    Email = s.Email,
-                    Address = s.Address,
-                    MobileNumber = s.MobileNumber,
-                    Admission = s.Admission
-                })
-                .ToListAsync();
+        {//below line is not recommended as it will load entire entity and then we will map it to DTO in memory which is inefficient and can cause performance issues for large datasets
+            var students = await _context.Students.ToListAsync();
+            var studentsDTO = _mapper.Map<List<StudentDTO>>(students);
+          
 
             return Ok(students);
         }
@@ -61,7 +55,9 @@ public class StudentController : ControllerBase
         if (student == null)
             return NotFound($"Student with ID {id} not found.");
 
-        return Ok(student);
+         var studentDTO = _mapper.Map<StudentDTO>(student);   
+
+        return Ok(studentDTO);
     }
 
     // ===================== CREATE =====================
@@ -77,15 +73,10 @@ public class StudentController : ControllerBase
 
         if (await _context.Students.AnyAsync(s => s.Email == model.Email))
             return Conflict("Email already exists.");
+            if(await _context.Students.AnyAsync(s => s.MobileNumber == model.MobileNumber))
+                return Conflict("Mobile number already exists.");
 
-        var student = new Students
-        {
-            StudentName = model.StudentName,
-            Email = model.Email,
-            Address = model.Address,
-            MobileNumber = model.MobileNumber,
-            Admission = model.Admission
-        };
+        var student = _mapper.Map<Students>(model);
 
         try
         {
@@ -106,14 +97,16 @@ public class StudentController : ControllerBase
     // ===================== UPDATE =====================
     [HttpPut("Update")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)] 
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateStudent([FromBody] StudentDTO model)
     {
         if (!ModelState.IsValid || model.id <= 0)
             return BadRequest("Invalid input data.");
 
-        var student = await _context.Students.FindAsync(model.id);
+        // var student = await _context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.Id == model.id);
+        var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == model.id);
+
 
         if (student == null)
             return NotFound($"Student with ID {model.id} not found.");
@@ -122,11 +115,14 @@ public class StudentController : ControllerBase
                 s.Email == model.Email && s.Id != model.id))
             return Conflict("Email already exists for another student.");
 
-        student.StudentName = model.StudentName;
-        student.Email = model.Email;
-        student.Address = model.Address;
-        student.MobileNumber = model.MobileNumber;
-        student.Admission = model.Admission;
+        var student1 = _mapper.Map<Students>(model);
+        _context.Students.Update(student1);
+
+        // student.StudentName = model.StudentName;
+        // student.Email = model.Email;
+        // student.Address = model.Address;
+        // student.MobileNumber = model.MobileNumber;
+        // student.Admission = model.Admission;
 
         await _context.SaveChangesAsync();
 
@@ -166,32 +162,24 @@ public class StudentController : ControllerBase
         if (patchDocument == null || id <= 0)
             return BadRequest("Invalid patch request.");
 
-        var student = await _context.Students.FindAsync(id);
+        var student = await _context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id);
 
         if (student == null)
             return NotFound($"Student with ID {id} not found.");
 
-        var studentDTO = new StudentDTO
-        {
-            id = student.Id,
-            StudentName = student.StudentName,
-            Email = student.Email,
-            Address = student.Address,
-            MobileNumber = student.MobileNumber,
-            Admission = student.Admission
-        };
+        var studentDTO = _mapper.Map<StudentDTO>(student);
 
         patchDocument.ApplyTo(studentDTO, ModelState);
 
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        student.StudentName = studentDTO.StudentName;
-        student.Email = studentDTO.Email;
-        student.Address = studentDTO.Address;
-        student.MobileNumber = studentDTO.MobileNumber;
-        student.Admission = studentDTO.Admission;
-
+        // student.StudentName = studentDTO.StudentName;
+        // student.Email = studentDTO.Email;
+        // student.Address = studentDTO.Address;
+        // student.MobileNumber = studentDTO.MobileNumber;
+        // student.Admission = studentDTO.Admission;
+             _context.Students.Update(_mapper.Map<Students>(studentDTO));
         await _context.SaveChangesAsync();
 
         return NoContent();
