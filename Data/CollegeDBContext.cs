@@ -10,10 +10,12 @@ public class CollegeDBContext : DbContext
     }
 
     public DbSet<Students> Students { get; set; } = null!;
+    public DbSet<Department> Departments { get; set; } = null!;
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         //student table 1
         // config in future whenever new tables comes apply there configuration here in this method
        modelBuilder.ApplyConfiguration(new Config.StudentConfig());
+       modelBuilder.ApplyConfiguration(new Config.DepartmentConfig());
     }
 }

@@ -6,7 +6,6 @@ D:\Project\dotnet\WebApi\bin\Debug\net10.0\WebApi.deps.json
 D:\Project\dotnet\WebApi\bin\Debug\net10.0\WebApi.runtimeconfig.json
 D:\Project\dotnet\WebApi\bin\Debug\net10.0\WebApi.dll
 D:\Project\dotnet\WebApi\bin\Debug\net10.0\WebApi.pdb
-D:\Project\dotnet\WebApi\bin\Debug\net10.0\Microsoft.AspNetCore.OpenApi.dll
 D:\Project\dotnet\WebApi\bin\Debug\net10.0\Microsoft.OpenApi.dll
 D:\Project\dotnet\WebApi\obj\Debug\net10.0\WebApi.csproj.AssemblyReference.cache
 D:\Project\dotnet\WebApi\obj\Debug\net10.0\rpswa.dswa.cache.json
@@ -129,3 +128,11 @@ d:\Project\dotnet\WebApi\bin\Debug\net10.0\zh-Hans\Microsoft.CodeAnalysis.Worksp
 d:\Project\dotnet\WebApi\bin\Debug\net10.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 D:\Project\dotnet\WebApi\bin\Debug\net10.0\AutoMapper.dll
 D:\Project\dotnet\WebApi\bin\Debug\net10.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+D:\Project\dotnet\WebApi\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\Project\dotnet\WebApi\bin\Debug\net10.0\Microsoft.IdentityModel.Abstractions.dll
+D:\Project\dotnet\WebApi\bin\Debug\net10.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Project\dotnet\WebApi\bin\Debug\net10.0\Microsoft.IdentityModel.Logging.dll
+D:\Project\dotnet\WebApi\bin\Debug\net10.0\Microsoft.IdentityModel.Protocols.dll
+D:\Project\dotnet\WebApi\bin\Debug\net10.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\Project\dotnet\WebApi\bin\Debug\net10.0\Microsoft.IdentityModel.Tokens.dll
+D:\Project\dotnet\WebApi\bin\Debug\net10.0\System.IdentityModel.Tokens.Jwt.dll

@@ -11,6 +11,8 @@ public class AutoMapperConfig : Profile
     {
         CreateMap<Students, StudentDTO>();
         CreateMap<StudentDTO, Students>();
+            CreateMap<Department, DepartmentDTO>();
+            CreateMap<DepartmentDTO, Department>();
 
     }
 }

@@ -17,6 +17,10 @@ public class StudentConfig : IEntityTypeConfiguration<Students>
      builder.HasIndex(s=>s.Email).IsUnique();
     builder.Property(s=>s.MobileNumber).HasMaxLength(15);
     builder.HasIndex(s => s.MobileNumber).IsUnique();
+        builder.HasOne(s => s.Department)
+            .WithMany(d => d.Students)
+            .HasForeignKey(s => s.DepartmentId)
+            .HasConstraintName("FK_Students_Department");
    
     }
 }

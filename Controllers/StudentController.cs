@@ -5,15 +5,22 @@ using WebApi.DTO;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
+using Microsoft.AspNetCore.Http.HttpResults;
+using WebApi.Data.Respository;
+using Microsoft.AspNetCore.Cors;
 
 namespace WebApi.Controllers
 {
+
     [Route("api/[controller]")]
+    // Enable CORS for this controller
     [ApiController]
+
     public class StudentController : ControllerBase
     {
         private readonly IStudentRepository _repository;
         private readonly IMapper _mapper;
+
 
         public StudentController(IStudentRepository repository, IMapper mapper)
         {
@@ -26,9 +33,9 @@ namespace WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetStudents()
+        public async Task<IActionResult> GetAllStudents()
         {
-            var students = await _repository.GetStudentsAsync();
+            var students = await _repository.GetAllAsync();
 
             if (students == null || !students.Any())
                 return NotFound("No students found.");
@@ -46,7 +53,7 @@ namespace WebApi.Controllers
             if (id <= 0)
                 return BadRequest("Invalid student ID.");
 
-            var student = await _repository.GetStudentByIdAsync(id);
+            var student = await _repository.GetByIdAsync(student => student.Id == id);
 
             if (student == null)
                 return NotFound($"Student with ID {id} not found.");
@@ -65,12 +72,12 @@ namespace WebApi.Controllers
 
             var student = _mapper.Map<Students>(dto);
 
-            var id = await _repository.CreateStudentAsync(student);
+            var studentAfterCreation = await _repository.CreateAsync(student);
 
-            dto.id = id;
+            dto.id = studentAfterCreation.Id;
 
             return CreatedAtAction(nameof(GetStudentById),
-                new { id = id }, dto);
+                new { id = dto.id }, dto);
         }
 
         // ===================== UPDATE =====================
@@ -85,9 +92,9 @@ namespace WebApi.Controllers
 
             var student = _mapper.Map<Students>(dto);
 
-            var updated = await _repository.UpdateStudentAsync(student);
+            var studentAfterUpdated = await _repository.UpdateAsync(student);
 
-            if (!updated)
+            if (studentAfterUpdated == null)
                 return NotFound($"Student with ID {dto.id} not found.");
 
             return NoContent();
@@ -95,6 +102,7 @@ namespace WebApi.Controllers
 
         // ===================== DELETE =====================
         [HttpDelete("Delete/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -103,12 +111,13 @@ namespace WebApi.Controllers
             if (id <= 0)
                 return BadRequest("Invalid student ID.");
 
-            var deleted = await _repository.DeleteStudentAsync(id);
-
-            if (!deleted)
+            var deleted = await _repository.GetByIdAsync(student => student.Id == id);
+            // Console.WriteLine(deleted.Id);
+            if (deleted == null)
                 return NotFound($"Student with ID {id} not found.");
+            await _repository.DeleteAsync(deleted);
 
-            return NoContent();
+            return Ok("Student deleted successfully.");
         }
 
         // ===================== PATCH =====================
@@ -123,7 +132,7 @@ namespace WebApi.Controllers
             if (patchDocument == null || id <= 0)
                 return BadRequest("Invalid patch request.");
 
-            var student = await _repository.GetStudentByIdAsync(id);
+            var student = await _repository.GetByIdAsync(s => s.Id == id);
 
             if (student == null)
                 return NotFound($"Student with ID {id} not found.");
@@ -138,9 +147,9 @@ namespace WebApi.Controllers
             var updatedStudent = _mapper.Map<Students>(studentDTO);
             updatedStudent.Id = id;
 
-            var updated = await _repository.UpdateStudentAsync(updatedStudent);
+            var studentAfterPartialUpdate = await _repository.UpdateAsync(updatedStudent);
 
-            if (!updated)
+            if (studentAfterPartialUpdate == null)
                 return NotFound($"Student with ID {id} not found.");
 
             return NoContent();
